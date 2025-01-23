@@ -102,11 +102,19 @@ func NewChatClient(opts ...ClientOption) *ChatClient {
 	}
 }
 
-func (c *ChatClient) AddMessage(role, content, reasoning_content string) {
+func (c *ChatClient) AddUserMessage(content string) {
 	c.Messages = append(c.Messages, Message{
-		role,
+		"user",
 		content,
-		reasoning_content,
+		"",
+	})
+}
+
+func (c *ChatClient) AddSystemMessage(content, reasoningContent string) {
+	c.Messages = append(c.Messages, Message{
+		"system",
+		content,
+		reasoningContent,
 	})
 }
 
