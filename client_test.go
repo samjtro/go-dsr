@@ -10,6 +10,6 @@ import (
 func TestChatCompletion(t *testing.T) {
 	c := dsr.NewChatClient()
 	c.AddMessage("user", "hello!", "")
-	choices, _ := c.GetNextChatCompletion()
-	fmt.Println(choices)
+	res, _ := c.GetNextChatCompletion()
+	fmt.Println(res.Choices[0].Message.Content)
 }
