@@ -15,7 +15,10 @@ contact us: [hi (at) rizome.dev](mailto:hi@rizome.dev)
 
 ## quick start
 
-0. create a `.env`, `DEEPSEEK_API_KEY="KEY"`
+0. create a `.env`, formatted:
+```
+DEEPSEEK_API_KEY="KEY"
+```
 
 ## example
 
