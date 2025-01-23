@@ -1,6 +1,7 @@
 package dsr_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/samjtro/go-dsr"
@@ -8,6 +9,7 @@ import (
 
 func TestChatCompletion(t *testing.T) {
 	c := dsr.NewChatClient()
-	c.AddMessage("user", "hello!")
-	_, _ = c.GetNextChatCompletion()
+	c.AddMessage("user", "hello!", "")
+	choices, _ := c.GetNextChatCompletion()
+	fmt.Println(choices)
 }

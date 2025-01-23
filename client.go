@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/bytedance/sonic"
 	"github.com/joho/godotenv"
@@ -33,9 +34,39 @@ type (
 		Messages []*Message
 	}
 
+	Response struct {
+		ID      string   `json:"id"`
+		Object  string   `json:"object"`
+		Created int      `json:"created"`
+		Model   string   `json:"model"`
+		Choices []Choice `json:"choices"`
+		Usage   struct {
+			PromptTokens        int `json:"prompt_tokens"`
+			CompletionTokens    int `json:"completion_tokens"`
+			TotalTokens         int `json:"total_tokens"`
+			PromptTokensDetails struct {
+				CachedTokens int `json:"cached_tokens"`
+			} `json:"prompt_tokens_details"`
+			CompletionTokensDetails struct {
+				ReasoningTokens int `json:"reasoning_tokens"`
+			} `json:"completion_tokens_details"`
+			PromptCacheHitTokens  int `json:"prompt_cache_hit_tokens"`
+			PromptCacheMissTokens int `json:"prompt_cache_miss_tokens"`
+		} `json:"usage"`
+		SystemFingerprint string `json:"system_fingerprint"`
+	}
+
 	Message struct {
-		Role    string `json:"role"`
-		Content string `json:"content"`
+		Role             string `json:"role"`
+		Content          string `json:"content"`
+		ReasoningContent string `json:"reasoning_content,omitempty"`
+	}
+
+	Choice struct {
+		Index        int     `json:"index"`
+		Message      Message `json:"message"`
+		Logprobs     string  `json:"logprobs"`
+		FinishReason string  `json:"finish_reason"`
 	}
 )
 
@@ -58,8 +89,8 @@ func Initiate(opts ...ClientOption) *Client {
 		o.Key = os.Getenv("DEEPSEEK_API_KEY")
 	}
 	return &Client{
-		log: o.Log,
-		key: o.Key,
+		o.Log,
+		o.Key,
 	}
 }
 
@@ -71,19 +102,19 @@ func NewChatClient(opts ...ClientOption) *ChatClient {
 	}
 }
 
-func (c *ChatClient) AddMessage(role, content string) {
+func (c *ChatClient) AddMessage(role, content, reasoning_content string) {
 	c.Messages = append(c.Messages, &Message{
 		role,
 		content,
+		reasoning_content,
 	})
 }
 
-func (c *ChatClient) GetNextChatCompletion() (*Message, error) {
+func (c *ChatClient) GetNextChatCompletion() (*Response, error) {
 	m, err := sonic.MarshalString(c.Messages)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(m)
 	data := []byte(fmt.Sprintf(`{"model": "deepseek-reasoner", "messages": %s, "stream": false}`, m))
 	r, err := http.NewRequest("POST", fmt.Sprintf(BASE_URL+"/chat/completions"), bytes.NewBuffer(data))
 	if err != nil {
@@ -97,6 +128,16 @@ func (c *ChatClient) GetNextChatCompletion() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(resp)
-	return nil, nil
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var res Response
+	s := strings.ReplaceAll(string(body), "null", `"hi"`)
+	err = sonic.UnmarshalString(s, &res)
+	if err != nil {
+		return nil, err
+	}
+	return &res, nil
 }
