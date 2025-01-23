@@ -31,7 +31,7 @@ type (
 
 	ChatClient struct {
 		*Client
-		Messages []*Message
+		Messages []Message
 	}
 
 	Response struct {
@@ -95,7 +95,7 @@ func Initiate(opts ...ClientOption) *Client {
 }
 
 func NewChatClient(opts ...ClientOption) *ChatClient {
-	m := []*Message{}
+	m := []Message{}
 	return &ChatClient{
 		Initiate(opts...),
 		m,
@@ -103,7 +103,7 @@ func NewChatClient(opts ...ClientOption) *ChatClient {
 }
 
 func (c *ChatClient) AddMessage(role, content, reasoning_content string) {
-	c.Messages = append(c.Messages, &Message{
+	c.Messages = append(c.Messages, Message{
 		role,
 		content,
 		reasoning_content,
