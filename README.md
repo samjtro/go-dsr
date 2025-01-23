@@ -29,3 +29,9 @@ res, _ := c.GetNextChatCompletion()
 c.AddMessage("system", res.Choices[0].Message.Content, res.Choices[0].Message.ReasoningContent)
 fmt.Println(c.Messages)
 ```
+
+output:
+
+```
+[{user hello! } {system Hello! How can I assist you today? 😊 Okay, the user said "hello!" That's a friendly greeting. I should respond in a welcoming manner. Maybe say "Hello! How can I assist you today?" to keep the conversation going. Need to make sure the tone is approachable and helpful. Let me check for any typos. Yep, that looks good. Ready to send.}]
+```
