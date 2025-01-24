@@ -9,7 +9,11 @@ import (
 
 func TestChatCompletion(t *testing.T) {
 	c := dsr.NewChatClient()
-	c.AddUserMessage("can you help me with a math problem?")
+	c.AddUserMessage("hello!")
 	res, _ := c.GetNextChatCompletion()
-	fmt.Println(res)
+	c.AddMessage(res.Choices[0].Message)
+	fmt.Println(c.Messages)
+	c.AddUserMessage("can you help me with a math problem?")
+	res, _ = c.GetNextChatCompletion()
+	fmt.Println(res.Choices[0].Message.Content)
 }

@@ -55,6 +55,11 @@ type (
 		SystemFingerprint string `json:"system_fingerprint"`
 	}
 
+	message struct {
+		Role    string `json:"role"`
+		Content string `json:"content"`
+	}
+
 	Message struct {
 		Role             string `json:"role"`
 		Content          string `json:"content"`
@@ -118,6 +123,14 @@ func (c *ChatClient) AddMessage(m Message) {
 	c.Messages = append(c.Messages, m)
 }
 
+func (c *ChatClient) AddAssistantMessage(content, reasoningContent string) {
+	c.Messages = append(c.Messages, Message{
+		"assistant",
+		content,
+		reasoningContent,
+	})
+}
+
 func (c *ChatClient) AddUserMessage(content string) {
 	c.Messages = append(c.Messages, Message{
 		"user",
@@ -126,16 +139,16 @@ func (c *ChatClient) AddUserMessage(content string) {
 	})
 }
 
-func (c *ChatClient) AddSystemMessage(content, reasoningContent string) {
+func (c *ChatClient) AddSystemMessage(content string) {
 	c.Messages = append(c.Messages, Message{
 		"system",
 		content,
-		reasoningContent,
+		"",
 	})
 }
 
 func (c *ChatClient) GetNextChatCompletion() (*Response, error) {
-	m, err := sonic.MarshalString(c.Messages)
+	m, err := sonic.MarshalString(marshalMessages(c.Messages))
 	if err != nil {
 		return nil, err
 	}
@@ -153,4 +166,15 @@ func (c *ChatClient) GetNextChatCompletion() (*Response, error) {
 		return nil, err
 	}
 	return Handler(resp)
+}
+
+func marshalMessages(m []Message) []message {
+	var messages []message
+	for _, x := range m {
+		messages = append(messages, message{
+			x.Role,
+			x.Content,
+		})
+	}
+	return messages
 }

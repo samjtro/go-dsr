@@ -10,11 +10,11 @@ import (
 )
 
 func Handler(resp *http.Response) (*Response, error) {
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
 	var res Response
 	switch resp.StatusCode {
 	case 200:
-		defer resp.Body.Close()
-		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -24,7 +24,7 @@ func Handler(resp *http.Response) (*Response, error) {
 			return nil, err
 		}
 	default:
-		fmt.Println(resp)
+		fmt.Println(string(body))
 	}
 	return &res, nil
 }
