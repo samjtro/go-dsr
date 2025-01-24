@@ -165,7 +165,7 @@ func (c *ChatClient) GetNextChatCompletion() (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return Handler(resp)
+	return c.Handler(resp)
 }
 
 func marshalMessages(m []Message) []message {

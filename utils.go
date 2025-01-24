@@ -9,7 +9,7 @@ import (
 	"github.com/bytedance/sonic"
 )
 
-func Handler(resp *http.Response) (*Response, error) {
+func (c *Client) Handler(resp *http.Response) (*Response, error) {
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	var res Response
@@ -24,7 +24,8 @@ func Handler(resp *http.Response) (*Response, error) {
 			return nil, err
 		}
 	default:
-		fmt.Println(string(body))
+		c.log.Error(string(body))
 	}
+	c.log.Info(string(body))
 	return &res, nil
 }
