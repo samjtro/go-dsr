@@ -36,13 +36,19 @@ fmt.Println(c.Messages)
 output:
 
 ```
-[{user hello! } {assistant Hello! How can I assist you today? 😊 Okay, the user just said "hello!" That's a friendly greeting.
+[{user hello! }
+
+{assistant Hello! How can I assist you today? 😊 Okay, the user just said "hello!" That's a friendly greeting.
 
 I should respond in a warm and welcoming manner.
 
 Maybe say something like "Hello! How can I assist you today?" to keep the conversation going.
 
-Keep it simple and open-ended so they feel comfortable asking for help.} {user can you help me with a math problem? } {assistant Of course! I'd be happy to help with your math problem. Please go ahead and share the details, and I'll do my best to guide you through it step by step. 😊 Okay, the user asked if I can help with a math problem. Let me respond positively first. I need to be encouraging.
+Keep it simple and open-ended so they feel comfortable asking for help.}
+
+{user can you help me with a math problem? }
+
+{assistant Of course! I'd be happy to help with your math problem. Please go ahead and share the details, and I'll do my best to guide you through it step by step. 😊 Okay, the user asked if I can help with a math problem. Let me respond positively first. I need to be encouraging.
 
 They might have a specific problem in mind. I should ask them to provide the details so I can understand what they need. Maybe it's algebra, calculus, geometry? I shouldn't assume.
 
