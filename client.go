@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/bytedance/sonic"
 	"github.com/joho/godotenv"
@@ -63,10 +62,23 @@ type (
 	}
 
 	Choice struct {
-		Index        int     `json:"index"`
-		Message      Message `json:"message"`
-		Logprobs     string  `json:"logprobs"`
-		FinishReason string  `json:"finish_reason"`
+		Index        int      `json:"index"`
+		Message      Message  `json:"message"`
+		Logprobs     Logprobs `json:"logprobs"`
+		FinishReason string   `json:"finish_reason"`
+	}
+
+	Logprobs struct {
+		Content struct {
+			Token       string  `json:"token"`
+			Logprob     float64 `json:"logprob"`
+			Bytes       []int   `json:"bytes"`
+			TopLogprobs []struct {
+				Token   string  `json:"token"`
+				Logprob float64 `json:"logprob"`
+				Bytes   []int   `json:"bytes"`
+			} `json:"top_logprobs"`
+		} `json:"content"`
 	}
 )
 
@@ -100,6 +112,10 @@ func NewChatClient(opts ...ClientOption) *ChatClient {
 		Initiate(opts...),
 		m,
 	}
+}
+
+func (c *ChatClient) AddMessage(m Message) {
+	c.Messages = append(c.Messages, m)
 }
 
 func (c *ChatClient) AddUserMessage(content string) {
@@ -136,16 +152,5 @@ func (c *ChatClient) GetNextChatCompletion() (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	var res Response
-	s := strings.ReplaceAll(string(body), "null", `"hi"`)
-	err = sonic.UnmarshalString(s, &res)
-	if err != nil {
-		return nil, err
-	}
-	return &res, nil
+	return Handler(resp)
 }
