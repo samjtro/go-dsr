@@ -12,8 +12,8 @@ func TestChatCompletion(t *testing.T) {
 	c.AddUserMessage("hello!")
 	res, _ := c.GetNextChatCompletion()
 	c.AddMessage(res.Choices[0].Message)
-	fmt.Println(c.Messages)
 	c.AddUserMessage("can you help me with a math problem?")
 	res, _ = c.GetNextChatCompletion()
-	fmt.Println(res.Choices[0].Message.Content)
+	c.AddMessage(res.Choices[0].Message)
+	fmt.Println(c.Messages)
 }
