@@ -25,6 +25,7 @@ func (c *Client) Handler(resp *http.Response) (*Response, error) {
 		}
 	default:
 		c.log.Error(string(body))
+		return nil, fmt.Errorf("%d: %s", resp.StatusCode, string(body))
 	}
 	c.log.Info(string(body))
 	return &res, nil
